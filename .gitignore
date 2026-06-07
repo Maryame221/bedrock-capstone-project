@@ -1,0 +1,39 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+terraform.tfvars.json
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform lock file
+.terraform.lock.hcl
+
+# Lambda build artifacts
+*.zip
+
+# Kubernetes
+.kube/
+
+# Local test files
+test.txt
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Python
+__pycache__/
+*.pyc
+
+# Environment files
+.env
+.env.*
