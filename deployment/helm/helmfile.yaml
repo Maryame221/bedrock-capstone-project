@@ -1,0 +1,88 @@
+releases:
+  - name: "catalog"
+    namespace: "retail-app"
+    chart: ../catalog/chart
+    wait: true
+    values:
+      - templates/components.yaml.gotmpl
+      - templates/catalog.yaml.gotmpl
+      - app:
+          persistence:
+            provider: mysql
+            endpoint: bedrock-mysql.ceroeg06k2k4.us-east-1.rds.amazonaws.com
+            database: retail
+            secret:
+              create: true
+              name: catalog-db
+              username: admin
+              password: StrongPassword123!
+        mysql:
+          create: false
+
+  - name: "carts"
+    namespace: "retail-app"
+    chart: ../cart/chart
+    wait: true
+    values:
+      - templates/components.yaml.gotmpl
+      - templates/carts.yaml.gotmpl
+      - app:
+          persistence:
+            provider: dynamodb
+        dynamodb:
+          create: true
+
+  - name: "orders"
+    namespace: "retail-app"
+    chart: ../orders/chart
+    wait: true
+    values:
+      - templates/components.yaml.gotmpl
+      - templates/orders.yaml.gotmpl
+      - app:
+          persistence:
+            provider: postgres
+            endpoint: bedrock-postgres.ceroeg06k2k4.us-east-1.rds.amazonaws.com
+            database: orders
+            secret:
+              create: true
+              name: orders-db
+              username: dbadmin
+              password: StrongPassword123!
+          messaging:
+            provider: rabbitmq
+        postgresql:
+          create: false
+        rabbitmq:
+          create: true
+
+  - name: "checkout"
+    namespace: "retail-app"
+    chart: ../checkout/chart
+    wait: true
+    values:
+      - templates/components.yaml.gotmpl
+      - templates/checkout.yaml.gotmpl
+      - app:
+          persistence:
+            provider: redis
+          endpoints:
+            orders: http://orders:80
+        redis:
+          create: true
+
+  - name: "ui"
+    namespace: "retail-app"
+    chart: ../ui/chart
+    wait: true
+    timeout: 600
+    values:
+      - templates/components.yaml.gotmpl
+      - templates/ui.yaml.gotmpl
+      - templates/ingress.yaml.gotmpl
+      - app:
+          endpoints:
+            catalog: http://catalog
+            carts: http://carts
+            checkout: http://checkout
+            orders: http://orders
