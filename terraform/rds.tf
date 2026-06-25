@@ -60,7 +60,7 @@ resource "aws_db_instance" "mysql" {
 
   db_name  = "retail"
   username = "admin"
-  password = "StrongPassword123!" # we will move this to Secrets Manager later
+  password = "StrongPassword123!"
 
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   db_subnet_group_name   = aws_db_subnet_group.bedrock_db_subnets.name
@@ -87,7 +87,7 @@ resource "aws_db_instance" "postgres" {
 
   db_name  = "orders"
   username = "dbadmin"
-  password = "StrongPassword123!" # password will be changed later
+  password = "StrongPassword123!"
 
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   db_subnet_group_name   = aws_db_subnet_group.bedrock_db_subnets.name
