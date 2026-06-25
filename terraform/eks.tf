@@ -4,9 +4,18 @@ module "eks" {
 
   #Core Cluster config
   cluster_name    = "project-bedrock-cluster"
-  cluster_version = "1.30"
+  cluster_version = "1.35"
 
   enable_cluster_creator_admin_permissions = true
+
+  #Enable CloudWatch control plane logs 
+  cluster_enabled_log_types = [
+    "api",
+    "audit",
+    "authenticator",
+    "controllerManager",
+    "scheduler"
+  ]
 
 
   #Networking
@@ -31,18 +40,37 @@ module "eks" {
       max_size     = 2
       desired_size = 2
 
-      ami_type = "AL2_x86_64"
+      ami_type = "AL2023_x86_64_STANDARD"
     }
   }
 
   #Access control
   access_entries = {
+
     admin = {
+
       principal_arn = "arn:aws:iam::975050041392:root"
 
       policy_associations = {
         admin = {
           policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+
+    developer = {
+
+      principal_arn = aws_iam_user.developer.arn
+
+      policy_associations = {
+
+        view = {
+
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
 
           access_scope = {
             type = "cluster"
